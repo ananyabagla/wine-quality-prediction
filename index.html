@@ -4,12 +4,122 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wine Quality Prediction</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 50px;
+    }
+    h1 {
+      text-align: center;
+      color: #343a40;
+    }
+    form {
+      margin-bottom: 30px;
+    }
+    .form-group label {
+      color: #343a40;
+      font-weight: bold;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+    #predictionResult {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      font-style: italic;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Wine Quality Prediction</h1>
+    <form id="predictionForm">
+      <!-- Input fields for wine features -->
+      <div class="form-group">
+        <label for="fixed_acidity">Fixed Acidity:</label>
+        <input type="number" class="form-control" id="fixed_acidity" name="fixed_acidity" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="volatile_acidity">Volatile Acidity:</label>
+        <input type="number" class="form-control" id="volatile_acidity" name="volatile_acidity" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="citric_acid">Citric Acid:</label>
+        <input type="number" class="form-control" id="citric_acid" name="citric_acid" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="residual_sugar">Residual Sugar:</label>
+        <input type="number" class="form-control" id="residual_sugar" name="residual_sugar" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="chlorides">Chlorides:</label>
+        <input type="number" class="form-control" id="chlorides" name="chlorides" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="free_sulfur_dioxide">Free Sulfur Dioxide:</label>
+        <input type="number" class="form-control" id="free_sulfur_dioxide" name="free_sulfur_dioxide" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="total_sulfur_dioxide">Total Sulfur Dioxide:</label>
+        <input type="number" class="form-control" id="total_sulfur_dioxide" name="total_sulfur_dioxide" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="density">Density:</label>
+        <input type="number" class="form-control" id="density" name="density" step="0.001" required>
+      </div>
+      <div class="form-group">
+        <label for="pH">pH:</label>
+        <input type="number" class="form-control" id="pH" name="pH" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="sulphates">Sulphates:</label>
+        <input type="number" class="form-control" id="sulphates" name="sulphates" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="alcohol">Alcohol:</label>
+        <input type="number" class="form-control" id="alcohol" name="alcohol" step="0.01" required>
+      </div>
+      
+      <!-- Predict Quality button -->
+      <button type="button" class="btn btn-primary btn-block" id="predictButton">Predict Quality</button>
+    </form>
+
+    <!-- Element to display prediction result -->
+    <div id="predictionResult"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>By - Ananya Vikram Bagla</p>
+  </div>
+
+  <!-- jQuery CDN -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- JavaScript code -->
   <script>
     $(document).ready(function() {
-      // Event listener for Predict Quality button click
       $("#predictButton").click(function() {
-        // Get form data
         var formData = {
           fixed_acidity: $("#fixed_acidity").val(),
           volatile_acidity: $("#volatile_acidity").val(),
@@ -24,65 +134,20 @@
           alcohol: $("#alcohol").val()
         };
 
-        // Make POST request to Flask API
         $.ajax({
           type: "POST",
           url: "/predict",
           data: formData,
-          success: function(prediction) {
-            // Update page with predicted value
-            $("#predictionResult").text("The quality of your wine is: " + prediction);
+          dataType: "json",
+          success: function(response) {
+            $("#predictionResult").text("The quality of your wine is: " + response.prediction);
           },
           error: function(error) {
-            // Display error message
             $("#predictionResult").text("Error predicting: " + error.responseText);
           }
         });
       });
     });
   </script>
-</head>
-<body>
-  <h2>Wine Quality Prediction</h2>
-  <!-- Form with input fields and Predict Quality button -->
-  <form id="predictionForm">
-    <label for="fixed_acidity">Fixed Acidity:</label>
-    <input type="number" id="fixed_acidity" name="fixed_acidity" step="0.01" required><br><br>
-    
-    <label for="volatile_acidity">Volatile Acidity:</label>
-    <input type="number" id="volatile_acidity" name="volatile_acidity" step="0.01" required><br><br>
-    
-    <label for="citric_acid">Citric Acid:</label>
-    <input type="number" id="citric_acid" name="citric_acid" step="0.01" required><br><br>
-    
-    <label for="residual_sugar">Residual Sugar:</label>
-    <input type="number" id="residual_sugar" name="residual_sugar" step="0.01" required><br><br>
-    
-    <label for="chlorides">Chlorides:</label>
-    <input type="number" id="chlorides" name="chlorides" step="0.01" required><br><br>
-    
-    <label for="free_sulfur_dioxide">Free Sulfur Dioxide:</label>
-    <input type="number" id="free_sulfur_dioxide" name="free_sulfur_dioxide" step="0.01" required><br><br>
-    
-    <label for="total_sulfur_dioxide">Total Sulfur Dioxide:</label>
-    <input type="number" id="total_sulfur_dioxide" name="total_sulfur_dioxide" step="0.01" required><br><br>
-    
-    <label for="density">Density:</label>
-    <input type="number" id="density" name="density" step="0.001" required><br><br>
-    
-    <label for="pH">pH:</label>
-    <input type="number" id="pH" name="pH" step="0.01" required><br><br>
-    
-    <label for="sulphates">Sulphates:</label>
-    <input type="number" id="sulphates" name="sulphates" step="0.01" required><br><br>
-    
-    <label for="alcohol">Alcohol:</label>
-    <input type="number" id="alcohol" name="alcohol" step="0.01" required><br><br>
-    
-    <button type="button" id="predictButton">Predict Quality</button>
-  </form>
-
-  <!-- Element to display prediction result -->
-  <div id="predictionResult"></div>
 </body>
 </html>
